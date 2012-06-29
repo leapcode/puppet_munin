@@ -43,7 +43,7 @@ To use this module, follow these directions:
    d. Add to the top of your site.pp a variable which indicates what IP should be allowed to 
       connect to your individual munin-nodes (this is typically your main munin host's IP):
 
-      $munin_cidr_allow = '192.168.0.1/32'
+      $munin_allow = '192.168.0.1/32'
 
 		You can also put an array there.
 
