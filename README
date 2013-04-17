@@ -29,27 +29,9 @@ To use this module, follow these directions:
    a. Your modules directory will need all the files included in this repository placed 
       under a directory called "munin"
 
-   b. add the following line to your modules.pp:
-   
-      import "munin" 
-
-      (NOTE: if you have followed the directions in README.common then you will have import 
-      "modules.pp" in your site.pp, if you do not have that, then you will need to add the 
-      import line to your site.pp)
-
-   c. you will also need to create the following empty directories:
-
-      mkdir -p /etc/puppet/modules/munin/files/nodes/modules_dir
-      mkdir -p /etc/puppet/modules/munin/files/plugins/modules_dir
-
-   d. Add to the top of your site.pp a variable which indicates what IP should be allowed to 
-      connect to your individual munin-nodes (this is typically your main munin host's IP):
-
-      $munin_allow = '192.168.0.1/32'
-
-		You can also put an array there.
-
-		On pre-lenny systems, you have to use the older Regexp-variant:
+   b. For every host you wish to gather munin statistics, add the class munin::client to that
+      node. You will want to set the class parameter 'allow' to be the IP(s) of the munin
+      collector, this defines what IP is permitted to connect to the node, for example:
 
       node foo {
         class { 'munin::client': allow => '192.168.0.1'}
