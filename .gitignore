@@ -1,0 +1,6 @@
+spec/fixtures/
+vendor/
+.tmp/*
+.librarian/*
+*.lock
+pkg/
