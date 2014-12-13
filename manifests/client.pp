@@ -3,18 +3,7 @@
 # Adapted and improved by admin(at)immerda.ch
 
 # configure a munin node
-class munin::client(
-  $allow                      = [ '127.0.0.1' ],
-  $host                       = '*',
-  $host_name                  = $::fqdn,
-  $port                       = '4949',
-  $use_ssh                    = false,
-  $manage_shorewall           = false,
-  $shorewall_collector_source = 'net',
-  $export_tag                 = 'munin',
-  $description                = 'absent',
-  $munin_group                = 'absent',
-) {
+class munin::client {
 
   case $::operatingsystem {
     openbsd: { include munin::client::openbsd }
@@ -24,11 +13,11 @@ class munin::client(
     centos: { include munin::client::base }
     default: { include munin::client::base }
   }
-  if $munin::client::manage_shorewall {
+  if $munin::manage_shorewall {
     class{'shorewall::rules::munin':
-      munin_port       => $port,
-      munin_collector  => delete($allow,'127.0.0.1'),
-      collector_source => $shorewall_collector_source,
+      munin_port       => $munin::port,
+      munin_collector  => delete($munin::allow,'127.0.0.1'),
+      collector_source => $munin::shorewall_collector_source,
     }
   }
 }

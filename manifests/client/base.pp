@@ -26,19 +26,19 @@ class munin::client::base inherits munin::client::params {
     owner   => root,
     group   => 0,
   }
-  $host = $munin::client::host ? {
+  $host = $munin::host ? {
     '*'      => $::fqdn,
-    default  => $munin::client::host
+    default  => $munin::host
   }
   munin::register { $::fqdn:
     host        => $host,
-    port        => $munin::client::port,
-    use_ssh     => $munin::client::use_ssh,
-    description => $munin::client::description,
-    group       => $munin::client::munin_group,
+    port        => $munin::port,
+    use_ssh     => $munin::use_ssh,
+    description => $munin::description,
+    group       => $munin::munin_group,
     config      => [ 'use_node_name yes', 'load.load.warning 5',
       'load.load.critical 10'],
-    export_tag  => $munin::client::export_tag,
+    export_tag  => $munin::export_tag,
   }
   include munin::plugins::base
 }

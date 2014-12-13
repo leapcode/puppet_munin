@@ -2,11 +2,8 @@
 # Copyright (C) 2007 David Schmitt <david@schmitt.edv-bus.at>
 # See LICENSE for the full license granted to you.
 
-class munin::host(
-  $cgi_graphing = false,
-  $cgi_owner = 'os_default',
-  $export_tag = 'munin'
-) {
+class munin::host {
+
   package {'munin': ensure => installed, }
 
   Concat::Fragment <<| tag == $export_tag |>>
@@ -31,9 +28,9 @@ class munin::host(
 
   include munin::plugins::muninhost
 
-  if $munin::host::cgi_graphing {
+  if $munin::cgi_graphing {
     class {'munin::host::cgi':
-      owner => $cgi_owner,
+      owner => $munin::cgi_owner,
     }
   }
 
@@ -44,7 +41,7 @@ class munin::host(
     user    => 'root',
   }
 
-  if $munin::host::manage_shorewall {
+  if $munin::manage_shorewall {
     include shorewall::rules::out::munin
   }
 }

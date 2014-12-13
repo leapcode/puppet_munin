@@ -34,13 +34,13 @@ ignore_file \.pod$
 # Set this if the client doesn't report the correct hostname when
 # telnetting to localhost, port 4949
 #
-host_name <%= scope.lookupvar('munin::client::host_name') %>
+host_name <%= scope.lookupvar('munin::host_name') %>
 
 # A list of addresses that are allowed to connect.  This must be a
 # regular expression, since Net::Server does not understand CIDR-style
 # network notation unless the perl module Net::CIDR is installed.  You
 # may repeat the allow line as many times as you'd like
-<% scope.lookupvar('munin::client::allow').each do |allow| -%>
+<% scope.lookupvar('munin::allow').each do |allow| -%>
 allow <%= "^#{Regexp.escape(allow)}$" %>
 <% end -%>
 
@@ -56,7 +56,7 @@ allow <%= "^#{Regexp.escape(allow)}$" %>
 # cidr_deny  192.0.2.42/32
 
 # Which address to bind to;
-host <%= scope.lookupvar('munin::client::host') %>
+host <%= scope.lookupvar('munin::host') %>
 
 # And which port
-port <%= scope.lookupvar('munin::client::port') %>
+port <%= scope.lookupvar('munin::port') %>
