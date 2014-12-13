@@ -28,27 +28,25 @@ Your modules directory will need all the files included in this repository place
 
 ### Master configuration
 
-In the node definition in your site.pp for your main munin host, add the following:
+To install a master (or server) you need to flip one argument to true in the main class:
 
-      class { 'munin::host': }
+      class { 'munin': is_server => true }
 
 If you want cgi graphing you can pass `cgi_graphing => true`. (For CentOS this is enabled in the default header config) for more information, see: http://munin.projects.linpro.no/wiki/CgiHowto
 
 ### Client configuration
 
-For every host you wish to gather munin statistics, add the class `munin::client` to that
+For every host you wish to gather munin statistics, add the class `munin` to that
 node. You will want to set the class parameter `allow` to be the IP(s) of the munin
 collector, this defines what IP is permitted to connect to the node, for example:
 
       node foo {
-        class { 'munin::client': allow => '192.168.0.1'}
+        class { 'munin': allow => '192.168.0.1'}
       }
 
-for multiple munin nodes, you can pass an array:
+for multiple munin collectors, you can pass an array:
 
-      class { 'munin::client': allow => [ '192.168.0.1', '10.0.0.1' ] }
-      
-   3. In the node definition in your site.pp for your main munin host, add the following:
+      class { 'munin': allow => [ '192.168.0.1', '10.0.0.1' ] }
 
 ### Local plugins
 
@@ -98,10 +96,45 @@ Module path is specified in `puppet.conf`, you can find out your `{modulepath}` 
 in console `puppet config print modulepath`.
 
 
-### Multiple munin instances
+### Multiple munin collectors
+
+If some part of your infrastructure should be graphed by one munin collector,
+and another part by a second collector, you can use the parameter $export_tag
+to the main class to differentiate which clients and collectors are associated.
+
+For example, here are four nodes: two collectors and two clients. Each
+collector is associated with one client:
+
+      node coll1 {
+        class { 'munin':
+          $is_server  => true,
+          $export_tag => 'coll1',
+        }
+      }
+
+      node client1 {
+        class { 'munin':
+          $export_tag => 'coll1',
+        }
+      }
+
+      node coll2 {
+        class { 'munin':
+          $is_server  => true,
+          $export_tag => 'coll2',
+        }
+      }
+
+      node client2 {
+        class { 'munin':
+          $export_tag => 'coll2',
+        }
+      }
+
+### Multiple munin-node instances with Linux-VServer
 
 If you have Linux-Vservers configured, you will likely have multiple munin-node processes
 competing for the default port 4949, for those nodes, set an alternate port for munin-node
 to run on by putting something similar to the following class parameter:
 
-      class { 'munin::client': allow => '192.168.0.1', port => '4948' }
+      class { 'munin': allow => '192.168.0.1', port => '4948' }
