@@ -7,7 +7,6 @@ class munin::client {
 
   case $::operatingsystem {
     openbsd: { include munin::client::openbsd }
-    darwin: { include munin::client::darwin }
     debian,ubuntu: { include munin::client::debian }
     gentoo: { include munin::client::gentoo }
     centos: { include munin::client::base }
