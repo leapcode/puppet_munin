@@ -40,6 +40,7 @@ class munin (
   $munin_group                = 'absent',
   $cgi_graphing               = false,
   $cgi_owner                  = 'os_default',
+  $if_filter                  = 'eth\d+_\d+|sit0|virbr\d+_nic|vif\d+_\d+|veth\d+|vnet\d+|__tmp\d+',
 ) {
 
   include munin::client
