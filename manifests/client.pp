@@ -3,6 +3,7 @@
 # Adapted and improved by admin(at)immerda.ch
 
 # configure a munin node
+# WARNING: this class should not be included directly. See the 'munin' class.
 class munin::client {
 
   case $::operatingsystem {

@@ -26,6 +26,14 @@ a very easy plugin interface. The munin homepage is http://munin.projects.linpro
 
 Your modules directory will need all the files included in this repository placed under a directory called `munin`.
 
+### Upgrade notices
+
+Users of the module who are upgrading from a older version of the module might be interested in these important changes:
+
+ * The `munin::client` and `munin::host` classes should not be included
+   directly anymore. Instead, the main class should be used for both client and
+   server (server should have the `$is_server` parameter set to true).
+
 ### Master configuration
 
 To install a master (or server) you need to flip one argument to true in the main class:

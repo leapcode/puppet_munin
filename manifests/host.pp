@@ -2,6 +2,7 @@
 # Copyright (C) 2007 David Schmitt <david@schmitt.edv-bus.at>
 # See LICENSE for the full license granted to you.
 
+# WARNING: this class should not be included directly. See the 'munin' class.
 class munin::host {
 
   package {'munin': ensure => installed, }
