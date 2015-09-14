@@ -7,7 +7,7 @@ class munin::host {
 
   package {'munin': ensure => installed, }
 
-  Concat::Fragment <<| tag == $export_tag |>>
+  Concat::Fragment <<| tag == $munin::export_tag |>>
 
   concat::fragment{'munin.conf.header':
     target => '/etc/munin/munin.conf',
