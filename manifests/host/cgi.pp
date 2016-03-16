@@ -1,14 +1,26 @@
-class munin::host::cgi {
-
+# Set up a munin host using CGI rendering
+class munin::host::cgi(
+  $owner = 'os_default'
+) {
   case $::operatingsystem {
     debian,ubuntu: {
-      $apache_user   = 'www-data'
       $document_root = '/var/www/munin'
     }
     default: {
-      $apache_user   = 'apache'
       $document_root = '/var/www/html/munin'
     }
+  }
+  if $owner == 'os_default' {
+    case $::operatingsystem {
+      debian,ubuntu: {
+        $apache_user = 'www-data'
+      }
+      default: {
+        $apache_user = 'apache'
+      }
+    }
+  } else {
+    $apache_user = $owner
   }
 
   exec{'set_modes_for_cgi':
@@ -18,11 +30,9 @@ class munin::host::cgi {
   }
 
   file{'/etc/logrotate.d/munin':
-    source => [ "puppet:///modules/site_munin/config/host/${::fqdn}/logrotate",
-                "puppet:///modules/site_munin/config/host/logrotate.${::operatingsystem}",
-                "puppet:///modules/site_munin/config/host/logrotate",
-                "puppet:///modules/munin/config/host/logrotate.${::operatingsystem}",
-                "puppet:///modules/munin/config/host/logrotate" ],
-    owner => root, group => 0, mode => 0644;
+    content => template("${module_name}/logrotate.conf.erb"),
+    owner   => root,
+    group   => 0,
+    mode    => '0644',
   }
 }

@@ -2,43 +2,47 @@
 # Copyright (C) 2007 David Schmitt <david@schmitt.edv-bus.at>
 # See LICENSE for the full license granted to you.
 
-class munin::host(
-  $cgi_graphing = false,
-  $export_tag = 'munin'
-) {
-  package {"munin": ensure => installed, }
-  include concat::setup
+# WARNING: this class should not be included directly. See the 'munin' class.
+class munin::host {
 
-  Concat::Fragment <<| tag == $export_tag |>>
+  package {'munin': ensure => installed, }
+
+  Concat::Fragment <<| tag == $munin::export_tag |>>
 
   concat::fragment{'munin.conf.header':
     target => '/etc/munin/munin.conf',
     source => [ "puppet:///modules/site_munin/config/host/${::fqdn}/munin.conf.header",
-                "puppet:///modules/site_munin/config/host/munin.conf.header.${::operatingsystem}.${::lsbdistcodename}",
+                "puppet:///modules/site_munin/config/host/munin.conf.header.${::operatingsystem}.${::operatingsystemmajrelease}",
                 "puppet:///modules/site_munin/config/host/munin.conf.header.${::operatingsystem}",
-                "puppet:///modules/site_munin/config/host/munin.conf.header",
-                "puppet:///modules/munin/config/host/munin.conf.header.${::operatingsystem}.${::lsbdistcodename}",
+                'puppet:///modules/site_munin/config/host/munin.conf.header',
+                "puppet:///modules/munin/config/host/munin.conf.header.${::operatingsystem}.${::operatingsystemmajrelease}",
                 "puppet:///modules/munin/config/host/munin.conf.header.${::operatingsystem}",
-                "puppet:///modules/munin/config/host/munin.conf.header" ],
-    order => 05,
+                'puppet:///modules/munin/config/host/munin.conf.header' ],
+    order  => 05,
   }
 
-  concat{ "/etc/munin/munin.conf":
-    owner => root, group => 0, mode => 0644;
+  concat{ '/etc/munin/munin.conf':
+    owner => root,
+    group => 0,
+    mode  => '0644',
   }
 
   include munin::plugins::muninhost
 
-  if $munin::host::cgi_graphing {
-    include munin::host::cgi
+  if $munin::cgi_graphing {
+    class {'munin::host::cgi':
+      owner => $munin::cgi_owner,
+    }
   }
 
   # from time to time we cleanup hanging munin-runs
-  file{'/etc/cron.d/munin_kill':
-    content => "4,34 * * * * root if $(ps ax | grep -v grep | grep -q munin-run); then killall munin-run; fi\n",
-    owner => root, group => 0, mode => 0644;
+  cron { 'munin_kill':
+    command => 'if $(ps ax | grep -v grep | grep -q munin-run); then killall munin-run; fi',
+    minute  => ['4', '34'],
+    user    => 'root',
   }
-  if $munin::host::manage_shorewall {
+
+  if $munin::manage_shorewall {
     include shorewall::rules::out::munin
   }
 }
